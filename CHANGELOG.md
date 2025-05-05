@@ -14,6 +14,14 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.2.0] - [No PR](#)
+
+### Changed
+
+- Changed cache key to prefix using the archive path (key is now just the filename). This is needed due to GitHub
+  versioning caches with the same key using their file path, causing silently failing cache restores when changing
+  `archive-path`
+
 ## [2.1.0] - [No PR](#)
 
 ### Added

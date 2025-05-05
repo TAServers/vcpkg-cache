@@ -8,7 +8,7 @@ inputs:
     description: "GitHub workflow token"
     required: true
   archive-path:
-    description: "Path to the vcpkg archives relative to $GITHUB_WORKSPACE"
+    description: "Path to the vcpkg archives (also used as the cache key prefix)"
     required: true
 runs:
   using: "node20"

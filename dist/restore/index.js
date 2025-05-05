@@ -69368,68 +69368,32 @@ function wrappy (fn, cb) {
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   Oc: () => (/* binding */ getCacheRestorePath),
-/* harmony export */   _G: () => (/* binding */ deleteCacheEntry),
-/* harmony export */   aP: () => (/* binding */ CACHE_KEY_PREFIX),
-/* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
+/* harmony export */   s: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
-/* unused harmony export getCacheKey */
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(6928);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(3228);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(7484);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
 
 
 
-
-const CACHE_KEY_PREFIX = "vcpkg-";
-
-const getCacheRestorePath = (vcpkgArchivePath, cacheKey) => {
-  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
-  const filename = `${abiHash}.zip`;
-  const directory = abiHash.slice(0, 2);
-
-  return path__WEBPACK_IMPORTED_MODULE_0__.join(vcpkgArchivePath, directory, filename);
-};
-
-const getCacheKey = (filename) => {
-  const abiHash = filename.slice(0, filename.length - ".zip".length);
-
-  return `${CACHE_KEY_PREFIX}${abiHash}`;
-};
-
-const getExistingCacheEntries = async (token) => {
-  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
+const getExistingCacheEntries = async (token, prefix) => {
+  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 
   try {
     const {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
-      ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
-      key: CACHE_KEY_PREFIX,
+      ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+      key: prefix,
       per_page: 100, // TODO: Handle pagination
     });
 
     return actionsCaches.map((c) => c.key);
   } catch (error) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_2__.setFailed(
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
-  }
-};
-
-const deleteCacheEntry = async (token, cacheKey) => {
-  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
-
-  try {
-    await octokit.rest.actions.deleteActionsCacheByKey({
-      ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
-      key: cacheKey,
-    });
-  } catch (error) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_2__.warning(`Failed to delete cache entry: ${error.message}`);
   }
 };
 
@@ -69455,26 +69419,18 @@ const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
 const vcpkgArchivePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path");
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", async () => {
-  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s1)(token);
+  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s)(token, vcpkgArchivePath);
 
   if (actionsCaches.length < 1) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .CACHE_KEY_PREFIX */ .aP}'`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${vcpkgArchivePath}'`);
     return;
   }
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
-      const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCacheRestorePath */ .Oc)(vcpkgArchivePath, cacheKey);
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${archivePath}'`);
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}'`);
 
-      const savedCacheKey = await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([archivePath], cacheKey, undefined, undefined, true);
-      if (!savedCacheKey) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(
-          "Cache failed to restore (likely due to a version mismatch from using a different archive path). Deleting old entry"
-        );
-
-        await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .deleteCacheEntry */ ._G)(token, cacheKey);
-      }
+      await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([cacheKey], cacheKey, undefined, undefined, true);
     })
   );
 });
