@@ -1,6 +1,6 @@
 import * as path from "path";
-import github from "@actions/github";
-import core from "@actions/core";
+import * as github from "@actions/github";
+import * as core from "@actions/core";
 
 export const CACHE_KEY_PREFIX = "vcpkg-";
 

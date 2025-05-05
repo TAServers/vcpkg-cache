@@ -1,5 +1,5 @@
-import cache from "@actions/cache";
-import core from "@actions/core";
+import * as cache from "@actions/cache";
+import * as core from "@actions/core";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { getCacheKey, getExistingCacheEntries } from "./helpers.js";

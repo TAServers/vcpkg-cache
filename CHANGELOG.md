@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.0.3] - [No PR](#)
+
+### Fixed
+
+- (Hopefully) fixed imports in `ncc` bundle not working
+
 ## [2.0.2] - [No PR](#)
 
 ### Fixed

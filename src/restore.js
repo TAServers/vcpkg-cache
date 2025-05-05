@@ -1,5 +1,5 @@
-import cache from "@actions/cache";
-import core from "@actions/core";
+import * as cache from "@actions/cache";
+import * as core from "@actions/core";
 import * as path from "path";
 import { CACHE_KEY_PREFIX, getCacheRestorePath, getExistingCacheEntries } from "./helpers.js";
 

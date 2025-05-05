@@ -69399,7 +69399,7 @@ const getCacheKey = (filename) => {
 };
 
 const getExistingCacheEntries = async (token) => {
-  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1___default().getOctokit(token);
+  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
 
   try {
     const {
@@ -69413,7 +69413,7 @@ const getExistingCacheEntries = async (token) => {
 
     return actionsCaches.map((c) => c.key);
   } catch (error) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_2___default().setFailed(
+    _actions_core__WEBPACK_IMPORTED_MODULE_2__.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
   }
@@ -69443,16 +69443,16 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_1___default().getInput("token");
-const vcpkgArchivePath = path__WEBPACK_IMPORTED_MODULE_2__.join("/github/workspace", _actions_core__WEBPACK_IMPORTED_MODULE_1___default().getInput("archive-path"));
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
+const vcpkgArchivePath = path__WEBPACK_IMPORTED_MODULE_2__.join("/github/workspace", _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path"));
 
-await _actions_core__WEBPACK_IMPORTED_MODULE_1___default().group("Saving vcpkg cache", async () => {
+await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", async () => {
   const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token));
 
   try {
     for await (const directory of fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true })) {
       if (!directory.isDirectory()) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1___default().warning(`Ignoring file '${directory.name}' in top level of vcpkg archive`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Ignoring file '${directory.name}' in top level of vcpkg archive`);
         continue;
       }
 
@@ -69462,22 +69462,22 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1___default().group("Saving vcpkg c
         const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name, file.name);
 
         if (!file.isFile() && !file.name.endsWith(".zip")) {
-          _actions_core__WEBPACK_IMPORTED_MODULE_1___default().info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);
+          _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);
           continue;
         }
 
         if (actionsCaches.has(cacheKey)) {
-          _actions_core__WEBPACK_IMPORTED_MODULE_1___default().info(`Skipping '${archivePath}' as already present in cache`);
+          _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as already present in cache`);
           continue;
         }
 
-        _actions_core__WEBPACK_IMPORTED_MODULE_1___default().info(`Saving '${archivePath}' to '${cacheKey}'`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Saving '${archivePath}' to '${cacheKey}'`);
 
-        await _actions_cache__WEBPACK_IMPORTED_MODULE_0___default().saveCache([archivePath], (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name));
+        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([archivePath], (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name));
       }
     }
   } catch (error) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1___default().setFailed(error);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(error);
   }
 });
 

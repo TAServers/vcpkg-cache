@@ -69400,7 +69400,7 @@ const getCacheKey = (filename) => {
 };
 
 const getExistingCacheEntries = async (token) => {
-  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1___default().getOctokit(token);
+  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
 
   try {
     const {
@@ -69414,7 +69414,7 @@ const getExistingCacheEntries = async (token) => {
 
     return actionsCaches.map((c) => c.key);
   } catch (error) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_2___default().setFailed(
+    _actions_core__WEBPACK_IMPORTED_MODULE_2__.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
   }
@@ -69441,23 +69441,23 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_1___default().getInput("token");
-const vcpkgArchivePath = path__WEBPACK_IMPORTED_MODULE_2__.join("/github/workspace", _actions_core__WEBPACK_IMPORTED_MODULE_1___default().getInput("archive-path"));
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
+const vcpkgArchivePath = path__WEBPACK_IMPORTED_MODULE_2__.join("/github/workspace", _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path"));
 
-await _actions_core__WEBPACK_IMPORTED_MODULE_1___default().group("Restoring vcpkg cache", async () => {
+await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", async () => {
   const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .getExistingCacheEntries */ .s1)(token);
 
   if (actionsCaches.length < 1) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1___default().info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .CACHE_KEY_PREFIX */ .aP}'`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .CACHE_KEY_PREFIX */ .aP}'`);
     return;
   }
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
       const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .getCacheRestorePath */ .Oc)(vcpkgArchivePath, cacheKey);
-      _actions_core__WEBPACK_IMPORTED_MODULE_1___default().info(`Restoring '${cacheKey}' to '${archivePath}'`);
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${archivePath}'`);
 
-      await _actions_cache__WEBPACK_IMPORTED_MODULE_0___default().restoreCache([archivePath], cacheKey);
+      await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([archivePath], cacheKey);
     })
   );
 });
