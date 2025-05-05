@@ -14,7 +14,7 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
-## [2.0.0] - [todo](todo)
+## [2.0.0] - [#4](https://github.com/TAServers/vcpkg-cache/pull/4)
 
 ### Changed
 
