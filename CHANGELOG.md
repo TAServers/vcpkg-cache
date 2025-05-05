@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.0.1] - [No PR](#)
+
+### Fixed
+
+- Bundle dependencies with `ncc` to fix missing imports
+
 ## [2.0.0] - [#4](https://github.com/TAServers/vcpkg-cache/pull/4)
 
 ### Changed
