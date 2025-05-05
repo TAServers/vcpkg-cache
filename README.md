@@ -13,6 +13,14 @@ Uses the official `@actions/cache` NPM package under the hood to ensure compatib
 
 ## Usage
 
+Add the `actions: read` permission to the workflow token:
+
+```yaml
+permissions:
+  actions: read
+  contents: read # Usually enabled by default. Needed for checkout
+```
+
 Configure environment variables:
 
 ```yaml
