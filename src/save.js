@@ -11,14 +11,16 @@ await core.group("Saving vcpkg cache", async () => {
   const actionsCaches = new Set(await getExistingCacheEntries(token));
 
   try {
-    for await (const directory of fs.readdir(vcpkgArchivePath, { withFileTypes: true })) {
+    const directories = await fs.readdir(vcpkgArchivePath, { withFileTypes: true });
+    for (const directory of directories) {
       if (!directory.isDirectory()) {
         core.warning(`Ignoring file '${directory.name}' in top level of vcpkg archive`);
         continue;
       }
 
       const subfolderPath = path.join(vcpkgArchivePath, directory.name);
-      for await (const file of fs.readdir(subfolderPath, { withFileTypes: true })) {
+      const files = await fs.readdir(subfolderPath, { withFileTypes: true });
+      for (const file of files) {
         const cacheKey = getCacheKey(file.name);
         const archivePath = path.join(vcpkgArchivePath, directory.name, file.name);
 

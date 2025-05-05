@@ -69450,14 +69450,16 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
   const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token));
 
   try {
-    for await (const directory of fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true })) {
+    const directories = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true });
+    for (const directory of directories) {
       if (!directory.isDirectory()) {
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(`Ignoring file '${directory.name}' in top level of vcpkg archive`);
         continue;
       }
 
       const subfolderPath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name);
-      for await (const file of fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(subfolderPath, { withFileTypes: true })) {
+      const files = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(subfolderPath, { withFileTypes: true });
+      for (const file of files) {
         const cacheKey = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name);
         const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name, file.name);
 

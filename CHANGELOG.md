@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.0.4] - [No PR](#)
+
+### Fixed
+
+- Fix directory iteration in save action
+
 ## [2.0.3] - [No PR](#)
 
 ### Fixed
