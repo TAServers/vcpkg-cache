@@ -36,7 +36,7 @@ await core.group("Saving vcpkg cache", async () => {
 
         core.info(`Saving '${archivePath}' to '${cacheKey}'`);
 
-        await cache.saveCache([archivePath], getCacheKey(file.name));
+        await cache.saveCache([archivePath], getCacheKey(file.name), undefined, true);
       }
     }
   } catch (error) {

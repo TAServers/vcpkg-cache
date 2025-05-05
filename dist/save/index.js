@@ -69371,7 +69371,7 @@ function wrappy (fn, cb) {
 /* harmony export */   et: () => (/* binding */ getCacheKey),
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
-/* unused harmony exports CACHE_KEY_PREFIX, getCacheRestorePath */
+/* unused harmony exports CACHE_KEY_PREFIX, getCacheRestorePath, deleteCacheEntry */
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(6928);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(3228);
@@ -69405,8 +69405,7 @@ const getExistingCacheEntries = async (token) => {
     const {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
-      owner: "TAServers",
-      repo: "TASBox",
+      ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
       key: CACHE_KEY_PREFIX,
       per_page: 100, // TODO: Handle pagination
     });
@@ -69416,6 +69415,19 @@ const getExistingCacheEntries = async (token) => {
     _actions_core__WEBPACK_IMPORTED_MODULE_2__.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
+  }
+};
+
+const deleteCacheEntry = async (token, cacheKey) => {
+  const octokit = github.getOctokit(token);
+
+  try {
+    await octokit.rest.actions.deleteActionsCacheByKey({
+      ...github.context.repo,
+      key: cacheKey,
+    });
+  } catch (error) {
+    core.warning(`Failed to delete cache entry: ${error.message}`);
   }
 };
 
@@ -69475,7 +69487,7 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
 
         _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Saving '${archivePath}' to '${cacheKey}'`);
 
-        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([archivePath], (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name));
+        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([archivePath], (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name), undefined, true);
       }
     }
   } catch (error) {

@@ -69369,6 +69369,7 @@ function wrappy (fn, cb) {
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   Oc: () => (/* binding */ getCacheRestorePath),
+/* harmony export */   _G: () => (/* binding */ deleteCacheEntry),
 /* harmony export */   aP: () => (/* binding */ CACHE_KEY_PREFIX),
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
@@ -69406,8 +69407,7 @@ const getExistingCacheEntries = async (token) => {
     const {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
-      owner: "TAServers",
-      repo: "TASBox",
+      ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
       key: CACHE_KEY_PREFIX,
       per_page: 100, // TODO: Handle pagination
     });
@@ -69417,6 +69417,19 @@ const getExistingCacheEntries = async (token) => {
     _actions_core__WEBPACK_IMPORTED_MODULE_2__.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
+  }
+};
+
+const deleteCacheEntry = async (token, cacheKey) => {
+  const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit(token);
+
+  try {
+    await octokit.rest.actions.deleteActionsCacheByKey({
+      ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
+      key: cacheKey,
+    });
+  } catch (error) {
+    _actions_core__WEBPACK_IMPORTED_MODULE_2__.warning(`Failed to delete cache entry: ${error.message}`);
   }
 };
 
@@ -69454,7 +69467,14 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", 
       const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCacheRestorePath */ .Oc)(vcpkgArchivePath, cacheKey);
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${archivePath}'`);
 
-      await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([archivePath], cacheKey);
+      const savedCacheKey = await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([archivePath], cacheKey, undefined, undefined, true);
+      if (!savedCacheKey) {
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(
+          "Cache failed to restore (likely due to a version mismatch from using a different archive path). Deleting old entry"
+        );
+
+        await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .deleteCacheEntry */ ._G)(token, cacheKey);
+      }
     })
   );
 });

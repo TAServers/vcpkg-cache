@@ -14,6 +14,16 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.1.0] - [No PR](#)
+
+### Added
+
+- Handles mismatched cache entry versions (usually due to changing the archive path)
+
+### Fixed
+
+- Removed hardcoded owner and repo strings
+
 ## [2.0.5] - [No PR](#)
 
 ### Fixed

@@ -26,7 +26,7 @@ Configure environment variables:
 ```yaml
 env:
   VCPKG_FEATURE_FLAGS: "binarycaching" # Possibly redundant, but explicitly sets the binary caching feature flag
-  VCPKG_ARCHIVE_PATH: "vcpkg-cache" # Can be any path you want. Not required and not used by vcpkg, just to avoid duplication in the workflow
+  VCPKG_ARCHIVE_PATH: "/vcpkg-cache" # Can be any path you want. Not required and not used by vcpkg, just to avoid duplication in the workflow
 ```
 
 Add `TAServers/vcpkg-cache` to your workflow before you run CMake configure (or whatever triggers your `vcpkg install`):

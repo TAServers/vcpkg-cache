@@ -25,8 +25,7 @@ export const getExistingCacheEntries = async (token) => {
     const {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
-      owner: "TAServers",
-      repo: "TASBox",
+      ...github.context.repo,
       key: CACHE_KEY_PREFIX,
       per_page: 100, // TODO: Handle pagination
     });
@@ -36,5 +35,18 @@ export const getExistingCacheEntries = async (token) => {
     core.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
+  }
+};
+
+export const deleteCacheEntry = async (token, cacheKey) => {
+  const octokit = github.getOctokit(token);
+
+  try {
+    await octokit.rest.actions.deleteActionsCacheByKey({
+      ...github.context.repo,
+      key: cacheKey,
+    });
+  } catch (error) {
+    core.warning(`Failed to delete cache entry: ${error.message}`);
   }
 };
