@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.0.5] - [No PR](#)
+
+### Fixed
+
+- Removed erroneously prefixing `/github/workspace` to archive path (legacy of Docker action)
+
 ## [2.0.4] - [No PR](#)
 
 ### Fixed

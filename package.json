@@ -1,6 +1,6 @@
 {
   "name": "vcpkg-cache",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Simple Node-based GitHub action to regain per-package caching using GitHub Actions.",
   "main": "src/restore.js",
   "private": true,

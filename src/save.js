@@ -5,7 +5,7 @@ import * as fs from "fs/promises";
 import { getCacheKey, getExistingCacheEntries } from "./helpers.js";
 
 const token = core.getInput("token");
-const vcpkgArchivePath = path.join("/github/workspace", core.getInput("archive-path"));
+const vcpkgArchivePath = core.getInput("archive-path");
 
 await core.group("Saving vcpkg cache", async () => {
   const actionsCaches = new Set(await getExistingCacheEntries(token));

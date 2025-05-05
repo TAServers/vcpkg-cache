@@ -69444,7 +69444,7 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
-const vcpkgArchivePath = path__WEBPACK_IMPORTED_MODULE_2__.join("/github/workspace", _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path"));
+const vcpkgArchivePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path");
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", async () => {
   const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token));

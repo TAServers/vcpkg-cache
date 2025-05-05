@@ -69433,28 +69433,25 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_cache__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(6928);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _helpers_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(6636);
-
+/* harmony import */ var _helpers_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(6636);
 
 
 
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
-const vcpkgArchivePath = path__WEBPACK_IMPORTED_MODULE_2__.join("/github/workspace", _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path"));
+const vcpkgArchivePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path");
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", async () => {
-  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .getExistingCacheEntries */ .s1)(token);
+  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s1)(token);
 
   if (actionsCaches.length < 1) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .CACHE_KEY_PREFIX */ .aP}'`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .CACHE_KEY_PREFIX */ .aP}'`);
     return;
   }
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
-      const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_3__/* .getCacheRestorePath */ .Oc)(vcpkgArchivePath, cacheKey);
+      const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCacheRestorePath */ .Oc)(vcpkgArchivePath, cacheKey);
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${archivePath}'`);
 
       await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([archivePath], cacheKey);
