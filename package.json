@@ -1,0 +1,24 @@
+{
+  "name": "vcpkg-cache",
+  "version": "1.0.0",
+  "description": "Simple Node-based GitHub action to regain per-package caching using GitHub Actions.",
+  "main": "src/restore.js",
+  "private": true,
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "TAServers",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "@actions/cache": "^4.0.3",
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0"
+  }
+}
