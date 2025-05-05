@@ -11,10 +11,6 @@ inputs:
     description: "Path to the vcpkg archives relative to $GITHUB_WORKSPACE"
     required: true
 runs:
-  using: "docker"
-  image: "docker://ghcr.io/taservers/vcpkg-cache:1.0.3"
-  entrypoint: "/restore.sh"
-  post-entrypoint: "/save.sh"
-  env:
-    INPUT_TOKEN: ${{ inputs.token }}
-    INPUT_ARCHIVE_PATH: ${{ inputs.archive-path }}
+  using: "node20"
+  main: "src/restore.js"
+  post: "src/save.js"
