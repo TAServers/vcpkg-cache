@@ -14,6 +14,13 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.0.2] - [No PR](#)
+
+### Fixed
+
+- Updated action entrypoint to `/dist`
+- Updated version in readme to `v2`
+
 ## [2.0.1] - [No PR](#)
 
 ### Fixed

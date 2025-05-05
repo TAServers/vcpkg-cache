@@ -12,5 +12,5 @@ inputs:
     required: true
 runs:
   using: "node20"
-  main: "src/restore.js"
-  post: "src/save.js"
+  main: "dist/restore/index.js"
+  post: "dist/save/index.js"

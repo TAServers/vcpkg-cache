@@ -3,7 +3,7 @@
 Simple Node-based GitHub action to regain per-package caching using GitHub Actions.
 
 ```yaml
-- uses: TAServers/vcpkg-cache@v1
+- uses: TAServers/vcpkg-cache@v2
   with:
     token: ${{ secrets.GITHUB_TOKEN }} # Used by @actions/github to read the cache entries in your repo prefixed with `vcpkg-`. Couldn't see a way with just `@actions/cache` to pull everything without needing a token
     archive-path: "some-path" # Where to restore the cache to
@@ -33,7 +33,7 @@ Add `TAServers/vcpkg-cache` to your workflow before you run CMake configure (or 
 
 ```yaml
 - name: Restore vcpkg cache
-  uses: TAServers/vcpkg-cache@v1
+  uses: TAServers/vcpkg-cache@v2
   with:
     token: ${{ secrets.GITHUB_TOKEN }}
     archive-path: ${{ env.VCPKG_ARCHIVE_PATH }}
