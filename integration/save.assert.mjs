@@ -7,7 +7,7 @@ const {
   data: { actions_caches: cacheEntries },
 } = await octokit.rest.actions.getActionsCacheList({
   ...github.context.repo,
-  key: process.env.ARCHIVE_PATH,
+  key: process.env.EXPECTED_CACHE_KEY_PREFIX,
 });
 
 const expectedCacheEntries = [
