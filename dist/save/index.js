@@ -69368,14 +69368,20 @@ function wrappy (fn, cb) {
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   q: () => (/* binding */ normalisePath),
 /* harmony export */   s: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(6928);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
 
 
+
+
+const normalisePath = (unnormalisedPath) => path__WEBPACK_IMPORTED_MODULE_2__.resolve(unnormalisedPath).split(path__WEBPACK_IMPORTED_MODULE_2__.set).join("/");
 
 const getExistingCacheEntries = async (token, prefix) => {
   const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
@@ -69389,6 +69395,7 @@ const getExistingCacheEntries = async (token, prefix) => {
       per_page: 100, // TODO: Handle pagination
     });
 
+    octokit.rest.actions.deleteActionsCacheByKey;
     return actionsCaches.map((c) => c.key);
   } catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(
@@ -69421,8 +69428,8 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 
-const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
-const vcpkgArchivePath = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path");
+const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token", { required: true });
+const vcpkgArchivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .normalisePath */ .q)(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path", { required: true }));
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", async () => {
   const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s)(token, vcpkgArchivePath));
@@ -69438,7 +69445,8 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
       const subfolderPath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name);
       const files = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(subfolderPath, { withFileTypes: true });
       for (const file of files) {
-        const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name, file.name);
+        const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .normalisePath */ .q)(path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name, file.name));
+        path__WEBPACK_IMPORTED_MODULE_2__.nor;
 
         if (!file.isFile() && !file.name.endsWith(".zip")) {
           _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);

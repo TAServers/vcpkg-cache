@@ -2,10 +2,10 @@ import * as cache from "@actions/cache";
 import * as core from "@actions/core";
 import * as path from "path";
 import * as fs from "fs/promises";
-import { getExistingCacheEntries } from "./helpers.js";
+import { getExistingCacheEntries, normalisePath } from "./helpers.js";
 
-const token = core.getInput("token");
-const vcpkgArchivePath = core.getInput("archive-path");
+const token = core.getInput("token", { required: true });
+const vcpkgArchivePath = normalisePath(core.getInput("archive-path", { required: true }));
 
 await core.group("Saving vcpkg cache", async () => {
   const actionsCaches = new Set(await getExistingCacheEntries(token, vcpkgArchivePath));
@@ -21,7 +21,8 @@ await core.group("Saving vcpkg cache", async () => {
       const subfolderPath = path.join(vcpkgArchivePath, directory.name);
       const files = await fs.readdir(subfolderPath, { withFileTypes: true });
       for (const file of files) {
-        const archivePath = path.join(vcpkgArchivePath, directory.name, file.name);
+        const archivePath = normalisePath(path.join(vcpkgArchivePath, directory.name, file.name));
+        path.nor;
 
         if (!file.isFile() && !file.name.endsWith(".zip")) {
           core.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);

@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [2.3.0] - [No PR](#)
+
+### Fixed
+
+- Normalised paths to be consistent across Windows and Linux runners
+
 ## [2.2.0] - [No PR](#)
 
 ### Changed

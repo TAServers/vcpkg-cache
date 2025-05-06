@@ -1,9 +1,9 @@
 import * as cache from "@actions/cache";
 import * as core from "@actions/core";
-import { getExistingCacheEntries } from "./helpers.js";
+import { getExistingCacheEntries, normalisePath } from "./helpers.js";
 
-const token = core.getInput("token");
-const vcpkgArchivePath = core.getInput("archive-path");
+const token = core.getInput("token", { required: true });
+const vcpkgArchivePath = normalisePath(core.getInput("archive-path", { required: true }));
 
 await core.group("Restoring vcpkg cache", async () => {
   const actionsCaches = await getExistingCacheEntries(token, vcpkgArchivePath);
