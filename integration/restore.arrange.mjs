@@ -11,4 +11,4 @@ await fs.writeFile(file, "");
 
 await cache.saveCache([file.split(path.sep).join("/")], cacheKey, undefined, true);
 
-await fs.rmdir(process.env.ARCHIVE_PATH);
+await fs.rm(process.env.ARCHIVE_PATH, { recursive: true });
