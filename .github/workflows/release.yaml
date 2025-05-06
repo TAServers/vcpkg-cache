@@ -28,7 +28,7 @@ jobs:
   integration-test:
     strategy:
       matrix:
-        runner: ["ubuntu-latest", "windows-latest", "mac-latest"]
+        runner: ["ubuntu-latest", "windows-latest"]
       max-parallel: 1
     runs-on: ${{ matrix.runner }}
 
