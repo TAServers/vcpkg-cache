@@ -81,11 +81,10 @@ jobs:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node dist/restore/index.js
 
-      - name: Assert path set to absolute location
-        run: test "${{ steps.vcpkg-cache.outputs.path }}" = "${{ github.workspace }}/${{ env.ARCHIVE_PATH }}"
-
-      - name: Assert cache restored
-        run: test -f "${{ env.ARCHIVE_PATH }}/00/${{ env.EXPECTED_RESTORED_ABI }}.zip"
+      - name: Assert restore
+        env:
+          ACTUAL_PATH: ${{ steps.vcpkg-cache.outputs.path }}
+        run: node integration/restore.assert.mjs
 
       # Save
       - name: Arrange save
