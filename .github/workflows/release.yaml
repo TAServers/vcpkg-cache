@@ -87,7 +87,7 @@ jobs:
         with:
           script: |
             const { data: { actions_caches: cacheEntries } } = await github.rest.actions.getActionsCacheList({
-              ...github.context.repo,
+              ...context.repo,
               key: "${{ env.ARCHIVE_PATH }}"
             });
 
@@ -109,13 +109,13 @@ jobs:
         with:
           script: |
             const { data: { actions_caches: cacheEntries } } = await github.rest.actions.getActionsCacheList({
-              ...github.context.repo
+              ...context.repo
             });
 
             for (const cacheEntry of cacheEntries) {
               try {
                 await github.rest.actions.deleteActionsCacheByKey({
-                  ...github.context.repo,
+                  ...context.repo,
                   key: cacheEntry.key
                 });
                 core.info(`Cleaned up cache entry '${cacheEntry.key}'`);
