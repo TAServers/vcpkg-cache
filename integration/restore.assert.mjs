@@ -7,7 +7,7 @@ const expectedPath = path.resolve(process.env.ARCHIVE_PATH);
 
 if (actualPath !== expectedPath) {
   core.setFailed(`Action's path output '${actualPath}' did not match expected path '${expectedPath}'`);
-  return;
+  process.exit(1);
 }
 
 const file = path.join(process.env.ARCHIVE_PATH, "00", `${process.env.EXPECTED_RESTORED_ABI}.zip`);
