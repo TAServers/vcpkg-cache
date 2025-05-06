@@ -26,12 +26,10 @@ jobs:
         run: npm test
 
   integration-test:
-    concurrency:
-      group: integration-test
-      cancel-in-progress: false
     strategy:
       matrix:
         runner: ["ubuntu-latest", "windows-latest", "mac-latest"]
+      max-parallel: 1
     runs-on: ${{ matrix.runner }}
 
     permissions:
