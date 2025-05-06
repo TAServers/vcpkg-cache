@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [3.0.1] - [No PR](#)
+
+### Fixed
+
+- Removed no longer used `archive-path` input from `action.yml`
+
 ## [3.0.0] - [No PR](#)
 
 ### Added
