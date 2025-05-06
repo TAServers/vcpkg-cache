@@ -37,7 +37,7 @@ jobs:
       actions: write
 
     env:
-      ARCHIVE_PATH: "vcpkg-cache"
+      ARCHIVE_PATH: ".vcpkg-cache"
       EXPECTED_CACHE_KEY_PREFIX: "vcpkg/"
       EXPECTED_RESTORED_ABI: "007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51109"
       EXPECTED_SAVED_ABI_1: "01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2"
@@ -68,7 +68,7 @@ jobs:
         run: node dist/restore/index.js
 
       - name: Assert path set to absolute location
-        run: test "${{ steps.vcpkg-cache.outputs.path }}" = "${{ github.workspace }}"
+        run: test "${{ steps.vcpkg-cache.outputs.path }}" = "${{ github.workspace }}/${{ env.ARCHIVE_PATH }}"
 
       - name: Assert cache restored
         run: test -f "${{ env.EXPECTED_RESTORED_CACHE_KEY }}"
