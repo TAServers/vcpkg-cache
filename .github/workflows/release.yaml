@@ -37,10 +37,10 @@ jobs:
 
     env:
       ARCHIVE_PATH: "/vcpkg-cache"
-      EXPECTED_RESTORED_CACHE_KEY: "${{ env.ARCHIVE_PATH }}/00/007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51109.zip"
-      EXPECTED_SAVED_CACHE_KEY_1: "${{ env.ARCHIVE_PATH }}/01/01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2.zip"
-      EXPECTED_SAVED_CACHE_KEY_2: "${{ env.ARCHIVE_PATH }}/01/01b1381bcce126024defb1388e254b1ea9cb0b0d16c9bfcd4d0917cfbec4d74f.zip"
-      EXPECTED_SAVED_CACHE_KEY_3: "${{ env.ARCHIVE_PATH }}/0b/0b4b1480038425969d0e4d3d044d27238bd0e7ce7e66dc94a324f0f2a2d90481.zip"
+      EXPECTED_RESTORED_CACHE_KEY: "/vcpkg-cache/00/007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51109.zip"
+      EXPECTED_SAVED_CACHE_KEY_1: "/vcpkg-cache/01/01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2.zip"
+      EXPECTED_SAVED_CACHE_KEY_2: "/vcpkg-cache/01/01b1381bcce126024defb1388e254b1ea9cb0b0d16c9bfcd4d0917cfbec4d74f.zip"
+      EXPECTED_SAVED_CACHE_KEY_3: "/vcpkg-cache/0b/0b4b1480038425969d0e4d3d044d27238bd0e7ce7e66dc94a324f0f2a2d90481.zip"
 
     steps:
       - uses: actions/checkout@v4
