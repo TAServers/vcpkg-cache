@@ -61,7 +61,7 @@ jobs:
           key: ${{ env.EXPECTED_CACHE_KEY_PREFIX }}${{ env.EXPECTED_RESTORED_ABI }}
 
       - name: Remove cache from disk
-        run: rm -rf "${{ env.ARCHIVE_PATH }}"
+        run: rm -r "${{ env.ARCHIVE_PATH }}"
 
       - name: Test cache restore
         id: vcpkg-cache
