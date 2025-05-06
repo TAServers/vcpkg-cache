@@ -22,7 +22,7 @@ await core.group("Saving vcpkg cache", async () => {
       const files = await fs.readdir(subfolderPath, { withFileTypes: true });
       for (const file of files) {
         // Relative path to avoid mismatched cache versions across environments
-        const archivePath = path.join(CACHE_FOLDER, subfolderPath, file.name);
+        const archivePath = path.join(CACHE_FOLDER, subfolderPath, file.name).split(path.sep).join("/");
 
         if (!file.isFile() && !file.name.endsWith(".zip")) {
           core.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);

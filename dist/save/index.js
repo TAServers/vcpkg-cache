@@ -69467,7 +69467,7 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
       const files = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(subfolderPath, { withFileTypes: true });
       for (const file of files) {
         // Relative path to avoid mismatched cache versions across environments
-        const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .CACHE_FOLDER */ ._r, subfolderPath, file.name);
+        const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .CACHE_FOLDER */ ._r, subfolderPath, file.name).split(path__WEBPACK_IMPORTED_MODULE_2__.sep).join("/");
 
         if (!file.isFile() && !file.name.endsWith(".zip")) {
           _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);
