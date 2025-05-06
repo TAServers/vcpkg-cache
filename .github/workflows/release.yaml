@@ -63,12 +63,16 @@ jobs:
           script: |
             core.exportVariable('ACTIONS_CACHE_SERVICE_V2', process.env.ACTIONS_CACHE_SERVICE_V2 || '');
             core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+            core.exportVariable('GITHUB_RUN_ID', process.env.GITHUB_RUN_ID || '');
 
       # Restore
       - name: Arrange restore
         env:
           ACTIONS_CACHE_SERVICE_V2: ${{ env.ACTIONS_CACHE_SERVICE_V2 }}
           ACTIONS_RESULTS_URL: ${{ env.ACTIONS_RESULTS_URL }}
+          ACTIONS_RUNTIME_TOKEN: ${{ env.ACTIONS_RUNTIME_TOKEN }}
+          GITHUB_RUN_ID: ${{ env.GITHUB_RUN_ID }}
         run: node integration/restore.arrange.mjs
 
       - name: Test cache restore
