@@ -9,6 +9,6 @@ const cacheKey = `${process.env.EXPECTED_CACHE_KEY_PREFIX}${process.env.EXPECTED
 await fs.mkdir(folder, { recursive: true });
 await fs.writeFile(file, "");
 
-await cache.saveCache([file.split(path.sep).join()], cacheKey, undefined, true);
+await cache.saveCache([file.split(path.sep).join("/")], cacheKey, undefined, true);
 
 await fs.rmdir(process.env.ARCHIVE_PATH);

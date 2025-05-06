@@ -59,7 +59,7 @@ jobs:
 
       # Restore
       - name: Arrange restore
-        run: node integration/restore.arrange.js
+        run: node integration/restore.arrange.mjs
 
       - name: Test cache restore
         id: vcpkg-cache
@@ -75,7 +75,7 @@ jobs:
 
       # Save
       - name: Arrange save
-        run: node integration/save.arrange.js
+        run: node integration/save.arrange.mjs
 
       - name: Test cache save
         env:
@@ -85,13 +85,13 @@ jobs:
       - name: Assert save
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node integration/save.assert.js
+        run: node integration/save.assert.mjs
 
       - name: Cleanup
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node integration/cleanup.js
+        run: node integration/cleanup.mjs
 
   release:
     runs-on: ubuntu-latest
