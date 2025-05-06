@@ -69368,7 +69368,7 @@ function wrappy (fn, cb) {
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   Oc: () => (/* binding */ getCacheRestorePath),
+/* harmony export */   Ej: () => (/* binding */ getCachePath),
 /* harmony export */   aP: () => (/* binding */ CACHE_KEY_PREFIX),
 /* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
@@ -69390,18 +69390,19 @@ const CACHE_KEY_PREFIX = "vcpkg/";
 
 const resolvedCacheFolder = () => path__WEBPACK_IMPORTED_MODULE_2__.resolve(CACHE_FOLDER);
 
-const getCacheRestorePath = (cacheKey) => {
-  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
-  const filename = `${abiHash}.zip`;
-  const directory = abiHash.slice(0, 2);
-
-  return path__WEBPACK_IMPORTED_MODULE_2__.join(resolvedCacheFolder(), directory, filename);
-};
-
 const getCacheKey = (filename) => {
   const abiHash = filename.slice(0, filename.length - ".zip".length);
 
   return `${CACHE_KEY_PREFIX}${abiHash}`;
+};
+
+const getCachePath = (cacheKey) => {
+  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
+  const filename = `${abiHash}.zip`;
+  const directory = abiHash.slice(0, 2);
+
+  // Relative path to avoid mismatched cache versions across environments
+  return path__WEBPACK_IMPORTED_MODULE_2__.join(CACHE_FOLDER, directory, filename).split(path__WEBPACK_IMPORTED_MODULE_2__.sep).join("/");
 };
 
 const getExistingCacheEntries = async (token) => {
@@ -69456,7 +69457,7 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", 
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
-      const cacheRestorePath = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCacheRestorePath */ .Oc)(cacheKey);
+      const cacheRestorePath = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCachePath */ .Ej)(cacheKey);
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
 
       await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);

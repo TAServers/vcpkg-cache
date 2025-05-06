@@ -69368,12 +69368,12 @@ function wrappy (fn, cb) {
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   _r: () => (/* binding */ CACHE_FOLDER),
+/* harmony export */   Ej: () => (/* binding */ getCachePath),
 /* harmony export */   et: () => (/* binding */ getCacheKey),
 /* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
-/* unused harmony exports CACHE_KEY_PREFIX, getCacheRestorePath */
+/* unused harmony exports CACHE_FOLDER, CACHE_KEY_PREFIX */
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
@@ -69390,18 +69390,19 @@ const CACHE_KEY_PREFIX = "vcpkg/";
 
 const resolvedCacheFolder = () => path__WEBPACK_IMPORTED_MODULE_2__.resolve(CACHE_FOLDER);
 
-const getCacheRestorePath = (cacheKey) => {
-  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
-  const filename = `${abiHash}.zip`;
-  const directory = abiHash.slice(0, 2);
-
-  return path.join(resolvedCacheFolder(), directory, filename);
-};
-
 const getCacheKey = (filename) => {
   const abiHash = filename.slice(0, filename.length - ".zip".length);
 
   return `${CACHE_KEY_PREFIX}${abiHash}`;
+};
+
+const getCachePath = (cacheKey) => {
+  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
+  const filename = `${abiHash}.zip`;
+  const directory = abiHash.slice(0, 2);
+
+  // Relative path to avoid mismatched cache versions across environments
+  return path__WEBPACK_IMPORTED_MODULE_2__.join(CACHE_FOLDER, directory, filename).split(path__WEBPACK_IMPORTED_MODULE_2__.sep).join("/");
 };
 
 const getExistingCacheEntries = async (token) => {
@@ -69466,24 +69467,22 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
       const subfolderPath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name);
       const files = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(subfolderPath, { withFileTypes: true });
       for (const file of files) {
-        // Relative path to avoid mismatched cache versions across environments
-        const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .CACHE_FOLDER */ ._r, subfolderPath, file.name).split(path__WEBPACK_IMPORTED_MODULE_2__.sep).join("/");
-
         if (!file.isFile() && !file.name.endsWith(".zip")) {
-          _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);
+          _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${path__WEBPACK_IMPORTED_MODULE_2__.join(subfolderPath, file.name)}' as not a file with the '.zip' extension`);
           continue;
         }
 
         const cacheKey = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name);
+        const cacheSavePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCachePath */ .Ej)(cacheKey);
 
         if (actionsCaches.has(cacheKey)) {
           _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${cacheKey}' as already present in cache`);
           continue;
         }
 
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Saving '${archivePath}' as '${cacheKey}'`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Saving '${cacheSavePath}' as '${cacheKey}'`);
 
-        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([archivePath], cacheKey, undefined, true);
+        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([cacheSavePath], cacheKey, undefined, true);
       }
     }
   } catch (error) {
