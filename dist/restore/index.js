@@ -69368,9 +69368,12 @@ function wrappy (fn, cb) {
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   q: () => (/* binding */ normalisePath),
-/* harmony export */   s: () => (/* binding */ getExistingCacheEntries)
+/* harmony export */   Oc: () => (/* binding */ getCacheRestorePath),
+/* harmony export */   aP: () => (/* binding */ CACHE_KEY_PREFIX),
+/* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
+/* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
+/* unused harmony exports CACHE_FOLDER, getCacheKey */
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
@@ -69381,9 +69384,27 @@ function wrappy (fn, cb) {
 
 
 
-const normalisePath = (unnormalisedPath) => path__WEBPACK_IMPORTED_MODULE_2__.resolve(unnormalisedPath).split(path__WEBPACK_IMPORTED_MODULE_2__.set).join("/");
+const CACHE_FOLDER = ".vcpkg-cache";
 
-const getExistingCacheEntries = async (token, prefix) => {
+const CACHE_KEY_PREFIX = "vcpkg/";
+
+const resolvedCacheFolder = () => path__WEBPACK_IMPORTED_MODULE_2__.resolve(CACHE_FOLDER);
+
+const getCacheRestorePath = (cacheKey) => {
+  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
+  const filename = `${abiHash}.zip`;
+  const directory = abiHash.slice(0, 2);
+
+  return path__WEBPACK_IMPORTED_MODULE_2__.join(resolvedCacheFolder(), directory, filename);
+};
+
+const getCacheKey = (filename) => {
+  const abiHash = filename.slice(0, filename.length - ".zip".length);
+
+  return `${CACHE_KEY_PREFIX}${abiHash}`;
+};
+
+const getExistingCacheEntries = async (token) => {
   const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 
   try {
@@ -69391,7 +69412,7 @@ const getExistingCacheEntries = async (token, prefix) => {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
       ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-      key: prefix,
+      key: CACHE_KEY_PREFIX,
       per_page: 100, // TODO: Handle pagination
     });
 
@@ -69423,21 +69444,22 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token", { required: true });
-const vcpkgArchivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .normalisePath */ .q)(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path", { required: true }));
+_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput("path", (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .resolvedCacheFolder */ .p8)());
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", async () => {
-  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s)(token, vcpkgArchivePath);
+  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s1)(token);
 
   if (actionsCaches.length < 1) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${vcpkgArchivePath}'`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .CACHE_KEY_PREFIX */ .aP}'`);
     return;
   }
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
-      _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}'`);
+      const cacheRestorePath = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCacheRestorePath */ .Oc)(cacheKey);
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
 
-      await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([cacheKey], cacheKey, undefined, undefined, true);
+      await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);
     })
   );
 });

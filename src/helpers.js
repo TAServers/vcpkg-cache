@@ -2,9 +2,27 @@ import * as github from "@actions/github";
 import * as core from "@actions/core";
 import * as path from "path";
 
-export const normalisePath = (unnormalisedPath) => path.resolve(unnormalisedPath).split(path.set).join("/");
+export const CACHE_FOLDER = ".vcpkg-cache";
 
-export const getExistingCacheEntries = async (token, prefix) => {
+export const CACHE_KEY_PREFIX = "vcpkg/";
+
+export const resolvedCacheFolder = () => path.resolve(CACHE_FOLDER);
+
+export const getCacheRestorePath = (cacheKey) => {
+  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
+  const filename = `${abiHash}.zip`;
+  const directory = abiHash.slice(0, 2);
+
+  return path.join(resolvedCacheFolder(), directory, filename);
+};
+
+export const getCacheKey = (filename) => {
+  const abiHash = filename.slice(0, filename.length - ".zip".length);
+
+  return `${CACHE_KEY_PREFIX}${abiHash}`;
+};
+
+export const getExistingCacheEntries = async (token) => {
   const octokit = github.getOctokit(token);
 
   try {
@@ -12,7 +30,7 @@ export const getExistingCacheEntries = async (token, prefix) => {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
       ...github.context.repo,
-      key: prefix,
+      key: CACHE_KEY_PREFIX,
       per_page: 100, // TODO: Handle pagination
     });
 

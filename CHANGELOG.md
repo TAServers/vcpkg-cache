@@ -14,11 +14,15 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
-## [2.3.0] - [No PR](#)
+## [3.0.0] - [No PR](#)
 
-### Fixed
+### Added
 
-- Normalised paths to be consistent across Windows and Linux runners
+- Added `path` output containing the absolute path of the archive folder to be passed to vcpkg
+
+### Removed
+
+- Removed `archive-path` input to take the burden of GHA cache edge cases off of the user
 
 ## [2.2.0] - [No PR](#)
 

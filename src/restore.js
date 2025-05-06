@@ -1,23 +1,24 @@
 import * as cache from "@actions/cache";
 import * as core from "@actions/core";
-import { getExistingCacheEntries, normalisePath } from "./helpers.js";
+import { CACHE_KEY_PREFIX, getCacheRestorePath, getExistingCacheEntries, resolvedCacheFolder } from "./helpers.js";
 
 const token = core.getInput("token", { required: true });
-const vcpkgArchivePath = normalisePath(core.getInput("archive-path", { required: true }));
+core.setOutput("path", resolvedCacheFolder());
 
 await core.group("Restoring vcpkg cache", async () => {
-  const actionsCaches = await getExistingCacheEntries(token, vcpkgArchivePath);
+  const actionsCaches = await getExistingCacheEntries(token);
 
   if (actionsCaches.length < 1) {
-    core.info(`No cache entries found with prefix '${vcpkgArchivePath}'`);
+    core.info(`No cache entries found with prefix '${CACHE_KEY_PREFIX}'`);
     return;
   }
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
-      core.info(`Restoring '${cacheKey}'`);
+      const cacheRestorePath = await getCacheRestorePath(cacheKey);
+      core.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
 
-      await cache.restoreCache([cacheKey], cacheKey, undefined, undefined, true);
+      await cache.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);
     })
   );
 });

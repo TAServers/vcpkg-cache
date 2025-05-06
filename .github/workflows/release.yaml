@@ -40,10 +40,11 @@ jobs:
 
     env:
       ARCHIVE_PATH: "vcpkg-cache"
-      EXPECTED_RESTORED_CACHE_KEY: "/vcpkg-cache/00/007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51109.zip"
-      EXPECTED_SAVED_CACHE_KEY_1: "/vcpkg-cache/01/01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2.zip"
-      EXPECTED_SAVED_CACHE_KEY_2: "/vcpkg-cache/01/01b1381bcce126024defb1388e254b1ea9cb0b0d16c9bfcd4d0917cfbec4d74f.zip"
-      EXPECTED_SAVED_CACHE_KEY_3: "/vcpkg-cache/0b/0b4b1480038425969d0e4d3d044d27238bd0e7ce7e66dc94a324f0f2a2d90481.zip"
+      EXPECTED_CACHE_KEY_PREFIX: "vcpkg/"
+      EXPECTED_RESTORED_ABI: "007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51109"
+      EXPECTED_SAVED_ABI_1: "01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2"
+      EXPECTED_SAVED_ABI_2: "01b1381bcce126024defb1388e254b1ea9cb0b0d16c9bfcd4d0917cfbec4d74f"
+      EXPECTED_SAVED_ABI_3: "0b4b1480038425969d0e4d3d044d27238bd0e7ce7e66dc94a324f0f2a2d90481"
 
     steps:
       - uses: actions/checkout@v4
@@ -51,22 +52,25 @@ jobs:
       - name: Create mock cache entry to restore
         run: |
           mkdir -p "${{ env.ARCHIVE_PATH }}/00"
-          touch "${{ env.EXPECTED_RESTORED_CACHE_KEY }}"
+          touch "${{ env.ARCHIVE_PATH }}/00/${{ env.EXPECTED_RESTORED_ABI }}.zip"
 
       - name: Save mock cache entry
         uses: actions/cache@v4
         with:
-          path: ${{ env.EXPECTED_RESTORED_CACHE_KEY }}
-          key: ${{ env.EXPECTED_RESTORED_CACHE_KEY }}
+          path: "${{ env.ARCHIVE_PATH }}/00/${{ env.EXPECTED_RESTORED_ABI }}.zip"
+          key: ${{ env.EXPECTED_CACHE_KEY_PREFIX }}${{ env.EXPECTED_RESTORED_ABI }}
 
-      - name: Remove entry from disk
-        run: rm -rf "${{ env.ARCHIVE_PATH }}/00"
+      - name: Remove cache from disk
+        run: rm -rf "${{ env.ARCHIVE_PATH }}"
 
       - name: Test cache restore
+        id: vcpkg-cache
         env:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_ARCHIVE-PATH: ${{ env.ARCHIVE_PATH }}
         run: node dist/restore/index.js
+
+      - name: Assert path set to absolute location
+        run: test "${{ steps.vcpkg-cache.outputs.path }}" = "${{ github.workspace }}"
 
       - name: Assert cache restored
         run: test -f "${{ env.EXPECTED_RESTORED_CACHE_KEY }}"
@@ -82,7 +86,6 @@ jobs:
       - name: Test cache save
         env:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_ARCHIVE-PATH: ${{ env.ARCHIVE_PATH }}
         run: node dist/save/index.js
 
       - name: Assert caches saved

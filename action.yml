@@ -10,6 +10,9 @@ inputs:
   archive-path:
     description: "Path to the vcpkg archives (also used as the cache key prefix)"
     required: true
+outputs:
+  path:
+    description: "Absolute path to the written cache"
 runs:
   using: "node20"
   main: "dist/restore/index.js"

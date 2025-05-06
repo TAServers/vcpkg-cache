@@ -69368,9 +69368,12 @@ function wrappy (fn, cb) {
 
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   q: () => (/* binding */ normalisePath),
-/* harmony export */   s: () => (/* binding */ getExistingCacheEntries)
+/* harmony export */   _r: () => (/* binding */ CACHE_FOLDER),
+/* harmony export */   et: () => (/* binding */ getCacheKey),
+/* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
+/* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
+/* unused harmony exports CACHE_KEY_PREFIX, getCacheRestorePath */
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
@@ -69381,9 +69384,27 @@ function wrappy (fn, cb) {
 
 
 
-const normalisePath = (unnormalisedPath) => path__WEBPACK_IMPORTED_MODULE_2__.resolve(unnormalisedPath).split(path__WEBPACK_IMPORTED_MODULE_2__.set).join("/");
+const CACHE_FOLDER = ".vcpkg-cache";
 
-const getExistingCacheEntries = async (token, prefix) => {
+const CACHE_KEY_PREFIX = "vcpkg/";
+
+const resolvedCacheFolder = () => path__WEBPACK_IMPORTED_MODULE_2__.resolve(CACHE_FOLDER);
+
+const getCacheRestorePath = (cacheKey) => {
+  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
+  const filename = `${abiHash}.zip`;
+  const directory = abiHash.slice(0, 2);
+
+  return path.join(resolvedCacheFolder(), directory, filename);
+};
+
+const getCacheKey = (filename) => {
+  const abiHash = filename.slice(0, filename.length - ".zip".length);
+
+  return `${CACHE_KEY_PREFIX}${abiHash}`;
+};
+
+const getExistingCacheEntries = async (token) => {
   const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 
   try {
@@ -69391,7 +69412,7 @@ const getExistingCacheEntries = async (token, prefix) => {
       data: { actions_caches: actionsCaches },
     } = await octokit.rest.actions.getActionsCacheList({
       ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-      key: prefix,
+      key: CACHE_KEY_PREFIX,
       per_page: 100, // TODO: Handle pagination
     });
 
@@ -69429,10 +69450,10 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token", { required: true });
-const vcpkgArchivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .normalisePath */ .q)(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("archive-path", { required: true }));
+const vcpkgArchivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .resolvedCacheFolder */ .p8)();
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", async () => {
-  const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s)(token, vcpkgArchivePath));
+  const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token));
 
   try {
     const directories = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true });
@@ -69445,22 +69466,24 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
       const subfolderPath = path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name);
       const files = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(subfolderPath, { withFileTypes: true });
       for (const file of files) {
-        const archivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .normalisePath */ .q)(path__WEBPACK_IMPORTED_MODULE_2__.join(vcpkgArchivePath, directory.name, file.name));
-        path__WEBPACK_IMPORTED_MODULE_2__.nor;
+        // Relative path to avoid mismatched cache versions across environments
+        const archivePath = path__WEBPACK_IMPORTED_MODULE_2__.join(_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .CACHE_FOLDER */ ._r, subfolderPath, file.name);
 
         if (!file.isFile() && !file.name.endsWith(".zip")) {
           _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as not a file with the '.zip' extension`);
           continue;
         }
 
-        if (actionsCaches.has(archivePath)) {
-          _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${archivePath}' as already present in cache`);
+        const cacheKey = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKey */ .et)(file.name);
+
+        if (actionsCaches.has(cacheKey)) {
+          _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Skipping '${cacheKey}' as already present in cache`);
           continue;
         }
 
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Saving '${archivePath}'`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Saving '${archivePath}' as '${cacheKey}'`);
 
-        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([archivePath], archivePath, undefined, true);
+        await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache([archivePath], cacheKey, undefined, true);
       }
     }
   } catch (error) {
