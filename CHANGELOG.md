@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [3.1.0] - [No PR](#)
+
+### Added
+
+- Support for pagination of the cache endpoints to avoid misses after 100 matching entries
+
 ## [3.0.1] - [No PR](#)
 
 ### Fixed

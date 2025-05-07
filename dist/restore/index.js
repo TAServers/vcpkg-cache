@@ -69409,16 +69409,13 @@ const getExistingCacheEntries = async (token) => {
   const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 
   try {
-    const {
-      data: { actions_caches: actionsCaches },
-    } = await octokit.rest.actions.getActionsCacheList({
+    const cacheEntries = await octokit.paginate(octokit.rest.actions.getActionsCacheList, {
       ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
       key: CACHE_KEY_PREFIX,
-      per_page: 100, // TODO: Handle pagination
+      per_page: 100,
     });
 
-    octokit.rest.actions.deleteActionsCacheByKey;
-    return actionsCaches.map((c) => c.key);
+    return cacheEntries.map((c) => c.key);
   } catch (error) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
