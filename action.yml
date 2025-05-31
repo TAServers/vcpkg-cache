@@ -7,6 +7,10 @@ inputs:
   token:
     description: "GitHub workflow token"
     required: true
+  prefix:
+    description: "Prefix added to all cache keys. Can be used for e.g. independently restoring cache entries for each vcpkg triplet."
+    required: false
+    default: "vcpkg/"
 outputs:
   path:
     description: "Absolute path to the written cache"

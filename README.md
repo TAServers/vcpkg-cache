@@ -5,8 +5,14 @@ Simple Node-based GitHub action to regain per-package caching using GitHub Actio
 ```yaml
 - uses: TAServers/vcpkg-cache@v3
   with:
-    token: ${{ secrets.GITHUB_TOKEN }} # Used by @actions/github to read the cache entries in your repo prefixed with `vcpkg/`. Couldn't see a way with just `@actions/cache` to pull everything without needing a token
+    token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+Inputs:
+
+- `token`: GitHub workflow token used by `@actions/github` to get the list of cache entries for the given prefix
+- (optional) `prefix`: Prefix added to cache keys to determine which cache entries to restore. Defaults to
+  `vcpkg/`
 
 Outputs:
 

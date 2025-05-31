@@ -69369,8 +69369,8 @@ function wrappy (fn, cb) {
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   Ej: () => (/* binding */ getCachePath),
-/* harmony export */   aP: () => (/* binding */ CACHE_KEY_PREFIX),
 /* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
+/* harmony export */   qZ: () => (/* binding */ getCacheKeyPrefix),
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
 /* harmony export */ });
 /* unused harmony exports CACHE_FOLDER, getCacheKey */
@@ -69386,18 +69386,18 @@ function wrappy (fn, cb) {
 
 const CACHE_FOLDER = ".vcpkg-cache";
 
-const CACHE_KEY_PREFIX = "vcpkg/";
+const getCacheKeyPrefix = () => _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("prefix") || "vcpkg/";
 
 const resolvedCacheFolder = () => path__WEBPACK_IMPORTED_MODULE_2__.resolve(CACHE_FOLDER);
 
-const getCacheKey = (filename) => {
+const getCacheKey = (filename, prefix) => {
   const abiHash = filename.slice(0, filename.length - ".zip".length);
 
-  return `${CACHE_KEY_PREFIX}${abiHash}`;
+  return `${prefix}${abiHash}`;
 };
 
-const getCachePath = (cacheKey) => {
-  const abiHash = cacheKey.slice(CACHE_KEY_PREFIX.length);
+const getCachePath = (cacheKey, prefix) => {
+  const abiHash = cacheKey.slice(prefix.length);
   const filename = `${abiHash}.zip`;
   const directory = abiHash.slice(0, 2);
 
@@ -69405,13 +69405,13 @@ const getCachePath = (cacheKey) => {
   return path__WEBPACK_IMPORTED_MODULE_2__.join(CACHE_FOLDER, directory, filename).split(path__WEBPACK_IMPORTED_MODULE_2__.sep).join("/");
 };
 
-const getExistingCacheEntries = async (token) => {
+const getExistingCacheEntries = async (token, prefix) => {
   const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 
   try {
     const cacheEntries = await octokit.paginate(octokit.rest.actions.getActionsCacheList, {
       ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-      key: CACHE_KEY_PREFIX,
+      key: prefix,
       per_page: 100,
     });
 
@@ -69442,19 +69442,20 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token", { required: true });
+const prefix = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCacheKeyPrefix */ .qZ)();
 _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput("path", (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .resolvedCacheFolder */ .p8)());
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", async () => {
-  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s1)(token);
+  const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s1)(token, prefix);
 
   if (actionsCaches.length < 1) {
-    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .CACHE_KEY_PREFIX */ .aP}'`);
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${prefix}'`);
     return;
   }
 
   await Promise.all(
     actionsCaches.map(async (cacheKey) => {
-      const cacheRestorePath = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCachePath */ .Ej)(cacheKey);
+      const cacheRestorePath = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCachePath */ .Ej)(cacheKey, prefix);
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
 
       await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);
