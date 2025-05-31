@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [3.2.0] - []()
+
+### Added
+
+- Optional input to override the cache key prefix
+
 ## [3.1.0] - [No PR](#)
 
 ### Added
