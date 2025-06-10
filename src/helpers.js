@@ -6,7 +6,7 @@ export const CACHE_FOLDER = ".vcpkg-cache";
 
 export const getCacheKeyPrefix = () => core.getInput("prefix") || "vcpkg/";
 
-export const getCurrentBranchRef = () => core.process.env.GITHUB_REF;
+export const getCurrentBranchRef = () => process.env.GITHUB_REF;
 
 export const resolvedCacheFolder = () => path.resolve(CACHE_FOLDER);
 
