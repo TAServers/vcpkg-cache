@@ -14,6 +14,12 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [3.3.0] - [#6](https://github.com/TAServers/vcpkg-cache/pull/8)
+
+### Fixed
+
+- Fixed not filtering cache entries by branch ref
+
 ## [3.2.0] - [#6](https://github.com/TAServers/vcpkg-cache/pull/6)
 
 ### Added
