@@ -6,6 +6,8 @@ export const CACHE_FOLDER = ".vcpkg-cache";
 
 export const getCacheKeyPrefix = () => core.getInput("prefix") || "vcpkg/";
 
+export const getCurrentBranchRef = () => process.env.GITHUB_REF;
+
 export const resolvedCacheFolder = () => path.resolve(CACHE_FOLDER);
 
 export const getCacheKey = (filename, prefix) => {
@@ -23,7 +25,7 @@ export const getCachePath = (cacheKey, prefix) => {
   return path.join(CACHE_FOLDER, directory, filename).split(path.sep).join("/");
 };
 
-export const getExistingCacheEntries = async (token, prefix) => {
+export const getExistingCacheEntries = async (token, prefix, ref) => {
   const octokit = github.getOctokit(token);
 
   try {
@@ -31,6 +33,7 @@ export const getExistingCacheEntries = async (token, prefix) => {
       ...github.context.repo,
       key: prefix,
       per_page: 100,
+      ref,
     });
 
     return cacheEntries.map((c) => c.key);
