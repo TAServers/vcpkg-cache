@@ -69372,7 +69372,8 @@ function wrappy (fn, cb) {
 /* harmony export */   et: () => (/* binding */ getCacheKey),
 /* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
 /* harmony export */   qZ: () => (/* binding */ getCacheKeyPrefix),
-/* harmony export */   s1: () => (/* binding */ getExistingCacheEntries)
+/* harmony export */   s1: () => (/* binding */ getExistingCacheEntries),
+/* harmony export */   vN: () => (/* binding */ getCurrentBranchRef)
 /* harmony export */ });
 /* unused harmony export CACHE_FOLDER */
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
@@ -69388,6 +69389,8 @@ function wrappy (fn, cb) {
 const CACHE_FOLDER = ".vcpkg-cache";
 
 const getCacheKeyPrefix = () => _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("prefix") || "vcpkg/";
+
+const getCurrentBranchRef = () => process.env.GITHUB_REF;
 
 const resolvedCacheFolder = () => path__WEBPACK_IMPORTED_MODULE_2__.resolve(CACHE_FOLDER);
 
@@ -69406,7 +69409,7 @@ const getCachePath = (cacheKey, prefix) => {
   return path__WEBPACK_IMPORTED_MODULE_2__.join(CACHE_FOLDER, directory, filename).split(path__WEBPACK_IMPORTED_MODULE_2__.sep).join("/");
 };
 
-const getExistingCacheEntries = async (token, prefix) => {
+const getExistingCacheEntries = async (token, prefix, ref) => {
   const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
 
   try {
@@ -69414,6 +69417,7 @@ const getExistingCacheEntries = async (token, prefix) => {
       ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
       key: prefix,
       per_page: 100,
+      ref,
     });
 
     return cacheEntries.map((c) => c.key);
@@ -69450,10 +69454,11 @@ __nccwpck_require__.r(__webpack_exports__);
 
 const token = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token", { required: true });
 const prefix = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCacheKeyPrefix */ .qZ)();
+const ref = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCurrentBranchRef */ .vN)();
 const vcpkgArchivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .resolvedCacheFolder */ .p8)();
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", async () => {
-  const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix));
+  const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, ref));
 
   try {
     const directories = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true });
