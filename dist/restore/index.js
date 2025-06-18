@@ -69486,7 +69486,7 @@ _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput("path", (0,_helpers_js__WEB
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", async () => {
   try {
-    const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntriesForCurrentBranch */ .ot)(token);
+    const actionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntriesForCurrentBranch */ .ot)(token, prefix);
 
     if (actionsCaches.size < 1) {
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${prefix}'`);

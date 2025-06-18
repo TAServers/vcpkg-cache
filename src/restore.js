@@ -13,7 +13,7 @@ core.setOutput("path", resolvedCacheFolder());
 
 await core.group("Restoring vcpkg cache", async () => {
   try {
-    const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token);
+    const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token, prefix);
 
     if (actionsCaches.size < 1) {
       core.info(`No cache entries found with prefix '${prefix}'`);
