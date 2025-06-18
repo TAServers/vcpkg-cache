@@ -3,29 +3,16 @@ import * as core from "@actions/core";
 import {
   getCacheKeyPrefix,
   getCachePath,
-  getExistingCacheEntries,
   resolvedCacheFolder,
-  getCurrentBranchRef,
-  getDefaultBranchRef,
+  getExistingCacheEntriesForCurrentBranch,
 } from "./helpers.js";
 
 const token = core.getInput("token", { required: true });
-const ref = getCurrentBranchRef();
 const prefix = getCacheKeyPrefix();
 core.setOutput("path", resolvedCacheFolder());
 
 await core.group("Restoring vcpkg cache", async () => {
-  const defaultBranchRef = await getDefaultBranchRef(token);
-  const defaultActionsCaches = await getExistingCacheEntries(token, prefix, defaultBranchRef);
-  core.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
-
-  const refActionsCaches = await getExistingCacheEntries(token, prefix, ref);
-  core.info(`Found ${refActionsCaches.length} caches for current branch ref '${ref}'`);
-  
-  const actionsCaches = new Set(defaultActionsCaches ?? []);
-
-  if (refActionsCaches)
-    actionsCaches.add(...refActionsCaches);
+  const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token);
 
   if (actionsCaches.size < 1) {
     core.info(`No cache entries found with prefix '${prefix}'`);

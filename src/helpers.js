@@ -7,18 +7,19 @@ export const CACHE_FOLDER = ".vcpkg-cache";
 export const getCacheKeyPrefix = () => core.getInput("prefix") || "vcpkg/";
 
 export const getDefaultBranchRef = async (token) => {
-try {
+  try {
     const octokit = github.getOctokit(token);
-  
+
     const repo = await octokit.rest.repos.get({
       ...github.context.repo,
     });
-  
+
     return `refs/heads/${repo.data.default_branch || "main"}`; // Fallback to 'main' if default branch is not set
-} catch (error) {
+  } catch (error) {
     core.setFailed(
       `Failed to fetch default branch from the repository. Please ensure you've granted the 'repo' permission to your workflow\n${error.message}`
     );
+
     return null;
   }
 };
@@ -59,4 +60,22 @@ export const getExistingCacheEntries = async (token, prefix, ref) => {
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
   }
+};
+
+export const getExistingCacheEntriesForCurrentBranch = async (token, prefix) => {
+  const defaultBranchRef = await getDefaultBranchRef(token);
+  const defaultActionsCaches = await getExistingCacheEntries(token, prefix, defaultBranchRef);
+  core.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
+
+  const currentBranchRef = getCurrentBranchRef();
+  const refActionsCaches = await getExistingCacheEntries(token, prefix, currentBranchRef);
+  core.info(`Found ${refActionsCaches.length} caches for current branch ref '${currentBranchRef}'`);
+
+  const actionsCaches = new Set(defaultActionsCaches ?? []);
+
+  if (refActionsCaches) {
+    actionsCaches.add(...refActionsCaches);
+  }
+
+  return actionsCaches;
 };
