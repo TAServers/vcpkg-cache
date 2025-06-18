@@ -69435,6 +69435,20 @@ const getExistingCacheEntries = async (token, prefix, ref) => {
       ref,
     });
 
+    if (_actions_core__WEBPACK_IMPORTED_MODULE_1__.isDebug()) {
+      const debugAllCacheEntries = await octokit.paginate(octokit.rest.actions.getActionsCacheList, {
+        ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+        key: prefix,
+        per_page: 100,
+      });
+
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.debug("All cache entries:");
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.debug(JSON.stringify(debugAllCacheEntries, null, 2));
+
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.debug(`Cache entries filtered by ref '${ref}'`);
+      _actions_core__WEBPACK_IMPORTED_MODULE_1__.debug(JSON.stringify(cacheEntries, null, 2));
+    }
+
     return cacheEntries.map((c) => c.key);
   } catch (error) {
     throw new Error(
