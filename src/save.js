@@ -9,6 +9,7 @@ import {
   getExistingCacheEntries,
   resolvedCacheFolder,
   getCurrentBranchRef,
+  getDefaultBranchRef,
 } from "./helpers.js";
 
 const token = core.getInput("token", { required: true });
@@ -17,7 +18,17 @@ const ref = getCurrentBranchRef();
 const vcpkgArchivePath = resolvedCacheFolder();
 
 await core.group("Saving vcpkg cache", async () => {
-  const actionsCaches = new Set(await getExistingCacheEntries(token, prefix, ref));
+  const defaultBranchRef = await getDefaultBranchRef(token);
+  const defaultActionsCaches = await getExistingCacheEntries(token, prefix, defaultBranchRef);
+  core.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
+
+  const actionsRefCaches = await getExistingCacheEntries(token, prefix, ref);
+  core.info(`Found ${actionsRefCaches.length} caches for current branch ref '${ref}'`);
+  
+  const actionsCaches = new Set(defaultActionsCaches ?? []);
+
+  if (actionsRefCaches)
+    actionsCaches.add(...actionsRefCaches);
 
   try {
     const directories = await fs.readdir(vcpkgArchivePath, { withFileTypes: true });

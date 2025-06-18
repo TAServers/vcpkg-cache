@@ -69476,10 +69476,10 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", 
   const actionsRefCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getExistingCacheEntries */ .s1)(token, prefix, ref);
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found ${actionsRefCaches.length} caches for current branch ref '${ref}'`);
   
-  const actionsCaches = new Set(actionsRefCaches ?? []);
+  const actionsCaches = new Set(defaultActionsCaches ?? []);
 
-  if (defaultActionsCaches)
-    actionsCaches.add(...defaultActionsCaches);
+  if (actionsRefCaches)
+    actionsCaches.add(...actionsRefCaches);
 
   if (actionsCaches.size < 1) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${prefix}'`);

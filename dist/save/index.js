@@ -69369,13 +69369,14 @@ function wrappy (fn, cb) {
 "use strict";
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
 /* harmony export */   Ej: () => (/* binding */ getCachePath),
+/* harmony export */   XX: () => (/* binding */ getDefaultBranchRef),
 /* harmony export */   et: () => (/* binding */ getCacheKey),
 /* harmony export */   p8: () => (/* binding */ resolvedCacheFolder),
 /* harmony export */   qZ: () => (/* binding */ getCacheKeyPrefix),
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries),
 /* harmony export */   vN: () => (/* binding */ getCurrentBranchRef)
 /* harmony export */ });
-/* unused harmony exports CACHE_FOLDER, getDefaultBranchRef */
+/* unused harmony export CACHE_FOLDER */
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
@@ -69392,15 +69393,15 @@ const getCacheKeyPrefix = () => _actions_core__WEBPACK_IMPORTED_MODULE_1__.getIn
 
 const getDefaultBranchRef = async (token) => {
 try {
-    const octokit = github.getOctokit(token);
+    const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit(token);
   
     const repo = await octokit.rest.repos.get({
-      ...github.context.repo,
+      ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
     });
   
     return `refs/heads/${repo.data.default_branch || "main"}`; // Fallback to 'main' if default branch is not set
 } catch (error) {
-    core.setFailed(
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(
       `Failed to fetch default branch from the repository. Please ensure you've granted the 'repo' permission to your workflow\n${error.message}`
     );
     return null;
@@ -69475,7 +69476,17 @@ const ref = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getCurrentBranchRef *
 const vcpkgArchivePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .resolvedCacheFolder */ .p8)();
 
 await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", async () => {
-  const actionsCaches = new Set(await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, ref));
+  const defaultBranchRef = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getDefaultBranchRef */ .XX)(token);
+  const defaultActionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, defaultBranchRef);
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
+
+  const actionsRefCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, ref);
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found ${actionsRefCaches.length} caches for current branch ref '${ref}'`);
+  
+  const actionsCaches = new Set(defaultActionsCaches ?? []);
+
+  if (actionsRefCaches)
+    actionsCaches.add(...actionsRefCaches);
 
   try {
     const directories = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true });
