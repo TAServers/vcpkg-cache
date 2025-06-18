@@ -15,9 +15,9 @@ const prefix = getCacheKeyPrefix();
 const vcpkgArchivePath = resolvedCacheFolder();
 
 await core.group("Saving vcpkg cache", async () => {
-  const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token, prefix);
-
   try {
+    const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token, prefix);
+
     const directories = await fs.readdir(vcpkgArchivePath, { withFileTypes: true });
     for (const directory of directories) {
       if (!directory.isDirectory()) {

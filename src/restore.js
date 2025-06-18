@@ -12,19 +12,23 @@ const prefix = getCacheKeyPrefix();
 core.setOutput("path", resolvedCacheFolder());
 
 await core.group("Restoring vcpkg cache", async () => {
-  const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token);
+  try {
+    const actionsCaches = await getExistingCacheEntriesForCurrentBranch(token);
 
-  if (actionsCaches.size < 1) {
-    core.info(`No cache entries found with prefix '${prefix}'`);
-    return;
+    if (actionsCaches.size < 1) {
+      core.info(`No cache entries found with prefix '${prefix}'`);
+      return;
+    }
+
+    await Promise.all(
+      Array.from(actionsCaches).map(async (cacheKey) => {
+        const cacheRestorePath = getCachePath(cacheKey, prefix);
+        core.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
+
+        await cache.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);
+      })
+    );
+  } catch (error) {
+    core.setFailed(error);
   }
-
-  await Promise.all(
-    Array.from(actionsCaches).map(async (cacheKey) => {
-      const cacheRestorePath = getCachePath(cacheKey, prefix);
-      core.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
-
-      await cache.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);
-    })
-  );
 });

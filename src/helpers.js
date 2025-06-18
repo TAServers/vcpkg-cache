@@ -56,7 +56,7 @@ export const getExistingCacheEntries = async (token, prefix, ref) => {
 
     return cacheEntries.map((c) => c.key);
   } catch (error) {
-    core.setFailed(
+    throw new Error(
       `Failed to fetch caches from the REST API. Please ensure you've granted the 'actions: read' permission to your workflow\n${error.message}`
     );
   }
