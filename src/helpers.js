@@ -52,20 +52,6 @@ export const getExistingCacheEntries = async (token, prefix, ref) => {
       ref,
     });
 
-    if (core.isDebug()) {
-      const debugAllCacheEntries = await octokit.paginate(octokit.rest.actions.getActionsCacheList, {
-        ...github.context.repo,
-        key: prefix,
-        per_page: 100,
-      });
-
-      core.debug("All cache entries:");
-      core.debug(JSON.stringify(debugAllCacheEntries, null, 2));
-
-      core.debug(`Cache entries filtered by ref '${ref}'`);
-      core.debug(JSON.stringify(cacheEntries, null, 2));
-    }
-
     return cacheEntries.map((c) => c.key);
   } catch (error) {
     throw new Error(
