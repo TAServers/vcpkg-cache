@@ -69375,7 +69375,7 @@ function wrappy (fn, cb) {
 /* harmony export */   s1: () => (/* binding */ getExistingCacheEntries),
 /* harmony export */   vN: () => (/* binding */ getCurrentBranchRef)
 /* harmony export */ });
-/* unused harmony export CACHE_FOLDER */
+/* unused harmony exports CACHE_FOLDER, getDefaultBranchRef */
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3228);
 /* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
@@ -69389,6 +69389,23 @@ function wrappy (fn, cb) {
 const CACHE_FOLDER = ".vcpkg-cache";
 
 const getCacheKeyPrefix = () => _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("prefix") || "vcpkg/";
+
+const getDefaultBranchRef = async (token) => {
+try {
+    const octokit = github.getOctokit(token);
+  
+    const repo = await octokit.rest.repos.get({
+      ...github.context.repo,
+    });
+  
+    return `refs/heads/${repo.data.default_branch || "main"}`; // Fallback to 'main' if default branch is not set
+} catch (error) {
+    core.setFailed(
+      `Failed to fetch default branch from the repository. Please ensure you've granted the 'repo' permission to your workflow\n${error.message}`
+    );
+    return null;
+  }
+};
 
 const getCurrentBranchRef = () => process.env.GITHUB_REF;
 
