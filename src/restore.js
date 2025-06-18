@@ -19,13 +19,13 @@ await core.group("Restoring vcpkg cache", async () => {
   const defaultActionsCaches = await getExistingCacheEntries(token, prefix, defaultBranchRef);
   core.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
 
-  const actionsRefCaches = await getExistingCacheEntries(token, prefix, ref);
-  core.info(`Found ${actionsRefCaches.length} caches for current branch ref '${ref}'`);
+  const refActionsCaches = await getExistingCacheEntries(token, prefix, ref);
+  core.info(`Found ${refActionsCaches.length} caches for current branch ref '${ref}'`);
   
   const actionsCaches = new Set(defaultActionsCaches ?? []);
 
-  if (actionsRefCaches)
-    actionsCaches.add(...actionsRefCaches);
+  if (refActionsCaches)
+    actionsCaches.add(...refActionsCaches);
 
   if (actionsCaches.size < 1) {
     core.info(`No cache entries found with prefix '${prefix}'`);

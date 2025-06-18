@@ -69480,13 +69480,13 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Saving vcpkg cache", asy
   const defaultActionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, defaultBranchRef);
   _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
 
-  const actionsRefCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, ref);
-  _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found ${actionsRefCaches.length} caches for current branch ref '${ref}'`);
+  const refActionsCaches = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_4__/* .getExistingCacheEntries */ .s1)(token, prefix, ref);
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Found ${refActionsCaches.length} caches for current branch ref '${ref}'`);
   
   const actionsCaches = new Set(defaultActionsCaches ?? []);
 
-  if (actionsRefCaches)
-    actionsCaches.add(...actionsRefCaches);
+  if (refActionsCaches)
+    actionsCaches.add(...refActionsCaches);
 
   try {
     const directories = await fs_promises__WEBPACK_IMPORTED_MODULE_3__.readdir(vcpkgArchivePath, { withFileTypes: true });
