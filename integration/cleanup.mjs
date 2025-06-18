@@ -10,6 +10,8 @@ const {
   key: process.env.EXPECTED_CACHE_KEY_PREFIX,
 });
 
+core.info(`Found ${cacheEntries.length} matching prefix '${process.env.EXPECTED_CACHE_KEY_PREFIX}'`);
+
 for (const cacheEntry of cacheEntries) {
   try {
     await octokit.rest.actions.deleteActionsCacheByKey({
