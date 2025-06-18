@@ -25,16 +25,16 @@ await core.group("Restoring vcpkg cache", async () => {
   const actionsCaches = new Set(defaultActionsCaches ?? []);
 
   if (actionsRefCaches)
-    actionsCaches.push(...actionsRefCaches);
-  
-  if (actionsCaches.length < 1) {
+    actionsCaches.add(...actionsRefCaches);
+
+  if (actionsCaches.size < 1) {
     core.info(`No cache entries found with prefix '${prefix}'`);
     return;
   }
 
   await Promise.all(
-    actionsCaches.map(async (cacheKey) => {
-      const cacheRestorePath = await getCachePath(cacheKey, prefix);
+    Array.from(actionsCaches).map(async (cacheKey) => {
+      const cacheRestorePath = getCachePath(cacheKey, prefix);
       core.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
 
       await cache.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);

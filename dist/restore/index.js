@@ -69479,16 +69479,16 @@ await _actions_core__WEBPACK_IMPORTED_MODULE_1__.group("Restoring vcpkg cache", 
   const actionsCaches = new Set(defaultActionsCaches ?? []);
 
   if (actionsRefCaches)
-    actionsCaches.push(...actionsRefCaches);
-  
-  if (actionsCaches.length < 1) {
+    actionsCaches.add(...actionsRefCaches);
+
+  if (actionsCaches.size < 1) {
     _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`No cache entries found with prefix '${prefix}'`);
     return;
   }
 
   await Promise.all(
-    actionsCaches.map(async (cacheKey) => {
-      const cacheRestorePath = await (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCachePath */ .Ej)(cacheKey, prefix);
+    Array.from(actionsCaches).map(async (cacheKey) => {
+      const cacheRestorePath = (0,_helpers_js__WEBPACK_IMPORTED_MODULE_2__/* .getCachePath */ .Ej)(cacheKey, prefix);
       _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`Restoring '${cacheKey}' to '${cacheRestorePath}'`);
 
       await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache([cacheRestorePath], cacheKey, undefined, undefined, true);
