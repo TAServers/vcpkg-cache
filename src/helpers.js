@@ -16,11 +16,9 @@ export const getDefaultBranchRef = async (token) => {
 
     return `refs/heads/${repo.data.default_branch || "main"}`; // Fallback to 'main' if default branch is not set
   } catch (error) {
-    core.setFailed(
-      `Failed to fetch default branch from the repository. Please ensure you've granted the 'repo' permission to your workflow\n${error.message}`
+    throw new Error(
+      `Failed to fetch default branch from the repository. Please ensure you've granted the 'repo: read' permission to your workflow\n${error.message}`
     );
-
-    return null;
   }
 };
 
@@ -67,13 +65,13 @@ export const getExistingCacheEntriesForCurrentBranch = async (token, prefix) => 
   const defaultActionsCaches = await getExistingCacheEntries(token, prefix, defaultBranchRef);
   core.info(`Found ${defaultActionsCaches.length} caches for default branch ref '${defaultBranchRef}'`);
 
-  const currentBranchRef = getCurrentBranchRef();
-  const refActionsCaches = await getExistingCacheEntries(token, prefix, currentBranchRef);
-  core.info(`Found ${refActionsCaches.length} caches for current branch ref '${currentBranchRef}'`);
-
   const actionsCaches = new Set(defaultActionsCaches ?? []);
 
-  if (refActionsCaches) {
+  const currentBranchRef = getCurrentBranchRef();
+  if (currentBranchRef !== defaultBranchRef) {
+    const refActionsCaches = await getExistingCacheEntries(token, prefix, currentBranchRef);
+    core.info(`Found ${refActionsCaches.length} caches for current branch ref '${currentBranchRef}'`);
+
     actionsCaches.add(...refActionsCaches);
   }
 
