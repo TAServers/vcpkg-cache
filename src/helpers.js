@@ -6,6 +6,23 @@ export const CACHE_FOLDER = ".vcpkg-cache";
 
 export const getCacheKeyPrefix = () => core.getInput("prefix") || "vcpkg/";
 
+export const getDefaultBranchRef = async (token) => {
+try {
+    const octokit = github.getOctokit(token);
+  
+    const repo = await octokit.rest.repos.get({
+      ...github.context.repo,
+    });
+  
+    return `refs/heads/${repo.data.default_branch || "main"}`; // Fallback to 'main' if default branch is not set
+} catch (error) {
+    core.setFailed(
+      `Failed to fetch default branch from the repository. Please ensure you've granted the 'repo' permission to your workflow\n${error.message}`
+    );
+    return null;
+  }
+};
+
 export const getCurrentBranchRef = () => process.env.GITHUB_REF;
 
 export const resolvedCacheFolder = () => path.resolve(CACHE_FOLDER);
