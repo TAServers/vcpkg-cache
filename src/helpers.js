@@ -68,12 +68,15 @@ export const getExistingCacheEntriesForCurrentBranch = async (token, prefix) => 
   const actionsCaches = new Set(defaultActionsCaches ?? []);
 
   const currentBranchRef = getCurrentBranchRef();
-  if (currentBranchRef !== defaultBranchRef) {
-    const refActionsCaches = await getExistingCacheEntries(token, prefix, currentBranchRef);
-    core.info(`Found ${refActionsCaches.length} caches for current branch ref '${currentBranchRef}'`);
 
-    actionsCaches.add(...refActionsCaches);
+  if (currentBranchRef === defaultBranchRef) {
+    return actionsCaches;
   }
+
+  const refActionsCaches = await getExistingCacheEntries(token, prefix, currentBranchRef);
+  core.info(`Found ${refActionsCaches.length} caches for current branch ref '${currentBranchRef}'`);
+
+  refActionsCaches.filter((key) => !!key).forEach((cacheKey) => actionsCaches.add(cacheKey));
 
   return actionsCaches;
 };
