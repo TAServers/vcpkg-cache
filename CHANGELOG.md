@@ -14,6 +14,13 @@ The valid change types are:
 - `Fixed` for any bug fixes.
 - `Security` in case of vulnerabilities.
 
+## [3.4.1] - [#14](https://github.com/TAServers/vcpkg-cache/pull/14)
+
+### Fixed
+
+- Fixed error when no caches had been generated on the current branch (when distinct from the default)
+- Fixed bug where only the first cache from the current branch was used
+
 ## [3.4.0] - [#11](https://github.com/TAServers/vcpkg-cache/pull/11)
 
 ### Added
