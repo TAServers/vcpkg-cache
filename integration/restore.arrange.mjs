@@ -1,11 +1,12 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+import * as os from "node:os";
 import * as cache from "@actions/cache";
 import * as core from "@actions/core";
 
 const folder = path.join(process.env.ARCHIVE_PATH, "00");
 const file = path.join(folder, `${process.env.EXPECTED_RESTORED_ABI}.zip`);
-const cacheKey = `${process.env.EXPECTED_CACHE_KEY_PREFIX}${process.env.EXPECTED_RESTORED_ABI}`;
+const cacheKey = `${os.type()}-${process.env.EXPECTED_CACHE_KEY_PREFIX}${process.env.EXPECTED_RESTORED_ABI}`;
 
 await fs.mkdir(folder, { recursive: true });
 await fs.writeFile(file, "");

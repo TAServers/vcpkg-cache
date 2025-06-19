@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
+import * as os from "node:os";
 
 const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
 
@@ -11,9 +12,9 @@ const {
 });
 
 const expectedCacheEntries = [
-  `${process.env.EXPECTED_CACHE_KEY_PREFIX}${process.env.EXPECTED_SAVED_ABI_1}`,
-  `${process.env.EXPECTED_CACHE_KEY_PREFIX}${process.env.EXPECTED_SAVED_ABI_2}`,
-  `${process.env.EXPECTED_CACHE_KEY_PREFIX}${process.env.EXPECTED_SAVED_ABI_3}`,
+  `${process.env.EXPECTED_CACHE_KEY_PREFIX}${os.type()}-${process.env.EXPECTED_SAVED_ABI_1}`,
+  `${process.env.EXPECTED_CACHE_KEY_PREFIX}${os.type()}-${process.env.EXPECTED_SAVED_ABI_2}`,
+  `${process.env.EXPECTED_CACHE_KEY_PREFIX}${os.type()}-${process.env.EXPECTED_SAVED_ABI_3}`,
 ];
 const actualCacheEntries = new Set(cacheEntries.map((c) => c.key));
 
