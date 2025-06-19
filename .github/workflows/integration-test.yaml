@@ -8,10 +8,9 @@ jobs:
     strategy:
       matrix:
         runner: ["ubuntu-latest", "windows-latest"]
-      max-parallel: 1
     runs-on: ${{ matrix.runner }}
 
-    concurrency: modifies-cache
+    concurrency: modifies-cache-${{ matrix.runner }}-${{ github.sha }}
 
     permissions:
       contents: read
@@ -19,7 +18,7 @@ jobs:
 
     env:
       ARCHIVE_PATH: ".vcpkg-cache"
-      EXPECTED_CACHE_KEY_PREFIX: "vcpkg/"
+      EXPECTED_CACHE_KEY_PREFIX: "vcpkg/${{ matrix.runner }}/${{ github.sha }}/"
       EXPECTED_RESTORED_ABI: "007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51100"
       EXPECTED_SAVED_ABI_1: "01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2"
       EXPECTED_SAVED_ABI_2: "01b1381bcce126024defb1388e254b1ea9cb0b0d16c9bfcd4d0917cfbec4d74f"
@@ -60,6 +59,7 @@ jobs:
         id: vcpkg-cache
         env:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_PREFIX: ${{ env.EXPECTED_CACHE_KEY_PREFIX }}
         run: node dist/restore/index.js
 
       - name: Assert restore
@@ -74,6 +74,7 @@ jobs:
       - name: Test cache save
         env:
           INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_PREFIX: ${{ env.EXPECTED_CACHE_KEY_PREFIX }}
         run: node dist/save/index.js
 
       - name: Assert save
