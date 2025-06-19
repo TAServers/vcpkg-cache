@@ -1,0 +1,13 @@
+name: Push Feature
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  unit-test:
+    uses: ./.github/workflows/unit-test.yaml
+
+  integration-test:
+    uses: ./.github/workflows/integration-test.yaml
