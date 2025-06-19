@@ -5,108 +5,12 @@ on:
     branches:
       - master
 
-concurrency: modifies-cache
-
 jobs:
   unit-test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm test
+    uses: ./.github/workflows/unit-test.yaml
 
   integration-test:
-    strategy:
-      matrix:
-        runner: ["ubuntu-latest", "windows-latest"]
-      max-parallel: 1
-    runs-on: ${{ matrix.runner }}
-
-    permissions:
-      contents: read
-      actions: write
-
-    env:
-      ARCHIVE_PATH: ".vcpkg-cache"
-      EXPECTED_CACHE_KEY_PREFIX: "vcpkg/"
-      EXPECTED_RESTORED_ABI: "007b2dfb916d3d63a4d185bf1d8f244abfc9c6b409d4b82c04ce9658a7b51100"
-      EXPECTED_SAVED_ABI_1: "01781cc1641e10e2bcb29c0bcdc49cb5ab4de33aea24b60183359cf5385bd6a2"
-      EXPECTED_SAVED_ABI_2: "01b1381bcce126024defb1388e254b1ea9cb0b0d16c9bfcd4d0917cfbec4d74f"
-      EXPECTED_SAVED_ABI_3: "0b4b1480038425969d0e4d3d044d27238bd0e7ce7e66dc94a324f0f2a2d90481"
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Export GitHub Actions cache environment variables
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_SERVICE_V2', process.env.ACTIONS_CACHE_SERVICE_V2 || '');
-            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            core.exportVariable('GITHUB_RUN_ID', process.env.GITHUB_RUN_ID || '');
-
-      # Restore
-      - name: Arrange restore
-        env:
-          ACTIONS_CACHE_SERVICE_V2: ${{ env.ACTIONS_CACHE_SERVICE_V2 }}
-          ACTIONS_RESULTS_URL: ${{ env.ACTIONS_RESULTS_URL }}
-          ACTIONS_RUNTIME_TOKEN: ${{ env.ACTIONS_RUNTIME_TOKEN }}
-          GITHUB_RUN_ID: ${{ env.GITHUB_RUN_ID }}
-        run: node integration/restore.arrange.mjs
-
-      - name: Test cache restore
-        id: vcpkg-cache
-        env:
-          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node dist/restore/index.js
-
-      - name: Assert restore
-        env:
-          ACTUAL_PATH: ${{ steps.vcpkg-cache.outputs.path }}
-        run: node integration/restore.assert.mjs
-
-      # Save
-      - name: Arrange save
-        run: node integration/save.arrange.mjs
-
-      - name: Test cache save
-        env:
-          INPUT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node dist/save/index.js
-
-      - name: Assert save
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node integration/save.assert.mjs
-
-      - name: Cleanup
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node integration/cleanup.mjs
+    uses: ./.github/workflows/integration-test.yaml
 
   release:
     runs-on: ubuntu-latest
